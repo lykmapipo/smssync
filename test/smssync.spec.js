@@ -96,7 +96,7 @@ describe('smssync', function () {
     /*jshint camelcase:true*/
 
     request(app)
-      .post('/smssync')
+      .post('/smssync?secret=smssync')
       .send(sms)
       .set('Accept', 'application/json')
       .expect(200)
@@ -134,7 +134,7 @@ describe('smssync', function () {
       };
 
       request(app)
-        .post('/smssync?task=sent')
+        .post('/smssync?task=sent&secret=smssync')
         .send(queued)
         .set('Accept', 'application/json')
         .expect(200)
@@ -171,7 +171,7 @@ describe('smssync', function () {
       };
 
       request(app)
-        .post('/smssync?task=result')
+        .post('/smssync?task=result&secret=smssync')
         .send(delivered)
         .set('Accept', 'application/json')
         .expect(200)
@@ -197,7 +197,7 @@ describe('smssync', function () {
   it('should be able to return sms to be sent by device', function (done) {
 
     request(app)
-      .get('/smssync')
+      .get('/smssync?secret=smssync')
       .set('Accept', 'application/json')
       .expect(200)
       .expect('Content-Type', /json/)
@@ -233,7 +233,7 @@ describe('smssync', function () {
     function (done) {
 
       request(app)
-        .get('/smssync?task=result')
+        .get('/smssync?task=result&secret=smssync')
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
@@ -248,6 +248,35 @@ describe('smssync', function () {
           expect(_.get(body, 'message_uuids')).to.exist;
 
           done(error, response);
+
+        });
+
+    });
+
+  it('should be able to reject request with no secret key sent by device',
+    function (done) {
+
+      request(app)
+        .get('/smssync')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function (error, response) {
+
+          expect(error).to.not.exist;
+          expect(response).to.exist;
+
+          const body = response.body;
+
+          expect(body).to.exist;
+          expect(body.payload).to.exist;
+          expect(body.payload.success).to.exist;
+          expect(body.payload.error).to.exist;
+          expect(body.payload.success).to.be.false;
+          expect(body.payload.error)
+            .to.be.equal('Secret Key Mismatch');
+
+          done();
 
         });
 

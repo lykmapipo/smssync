@@ -52,6 +52,58 @@ exports = module.exports = function (options) {
     extended: true
   }));
 
+  //protect endpoint with secret
+  if (options.secret && !_.isEmpty(options.secret)) {
+
+    //use middleware to protect endpoint using a secret
+    router.use(function (request, response, next) {
+      //obtain secret from query or body
+      const secret =
+        ((request.query || {}).secret) || ((request.body || {}).secret);
+
+      //ensure secret match
+      const isValidSecret = options.secret === secret;
+
+      //handle request if has valid secret
+      if (isValidSecret) {
+        next();
+      }
+
+      //throw authorization error
+      else {
+        //prepare error
+        const error = new Error('Secret Key Mismatch');
+
+        //pass error to error handler middleware
+        if (error && !options.error) {
+          next(error);
+        }
+
+        //handle error
+        else if (error && options.error) {
+
+          //obtain error message
+          const message = error.message ||
+            'Fail to process delivery reports';
+
+          //prepare smsync error response
+          const reply = {
+            payload: {
+              success: false,
+              error: message
+            }
+          };
+
+          //respond with error
+          response.ok(reply);
+
+        }
+      }
+
+    });
+
+  }
+
 
   /**
    * Handle Http POST on /smssync
