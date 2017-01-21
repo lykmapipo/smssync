@@ -63,7 +63,19 @@ describe('smssync', function () {
       done(null, [faker.random.uuid()]);
     },
 
-    onResult: function (delivered, done) {
+    onDelivered: function (delivered, done) {
+      //assert delivery reports
+      expect(delivered).to.be.an('array');
+
+      //assert single delivery report
+      const first = delivered[0];
+      expect(first).to.exist;
+      expect(_.get(first, 'uuid')).to.exist;
+      expect(_.get(first, 'sent_result_code')).to.exist;
+      expect(_.get(first, 'sent_result_message')).to.exist;
+      expect(_.get(first, 'delivered_result_code')).to.exist;
+      expect(_.get(first, 'delivered_result_message')).to.exist;
+
       done(null, delivered);
     }
 
@@ -138,6 +150,43 @@ describe('smssync', function () {
           expect(_.get(body, 'queued_messages')).to.exist;
           expect(_.get(body, 'queued_messages'))
             .to.have.same.members(_.get(queued, 'queued_messages'));
+
+          done(error, response);
+
+        });
+
+    });
+
+  it('should be able to receive delivery reports sent by a device',
+    function (done) {
+
+      const delivered = {
+        'message_result': [{
+          uuid: faker.random.uuid(),
+          'sent_result_code': 0,
+          'sent_result_message': 'SMSSync Message Sent',
+          'delivered_result_code': -1,
+          'delivered_result_message': ''
+        }]
+      };
+
+      request(app)
+        .post('/smssync?task=result')
+        .send(delivered)
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function (error, response) {
+
+          expect(error).to.not.exist;
+          expect(response).to.exist;
+
+          const body = response.body;
+
+          expect(body).to.exist;
+          expect(body.payload).to.exist;
+          expect(body.payload.success).to.be.true;
+
 
           done(error, response);
 

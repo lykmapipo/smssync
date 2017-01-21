@@ -87,9 +87,56 @@ exports = module.exports = function (options) {
 
     }
 
-    //handle delivery status
+    //handle delivery status(reports)
     else if (task && task === TASK_RESULT) {
-      //TODO
+
+      //hand over deliveries reports
+      const delivered = _.get(body, 'message_result');
+      options.onDelivered(delivered, function (error /*, result*/ ) {
+
+        //pass error to error handler middleware
+        if (error && !options.error) {
+          next(error);
+        }
+
+        //handle error
+        else if (error && options.error) {
+
+          //obtain error message
+          const message = error.message ||
+            'Fail to process delivery reports';
+
+          //prepare smsync error response
+          const reply = {
+            payload: {
+              success: false,
+              error: message
+            }
+          };
+
+          //respond with error
+          response.ok(reply);
+
+        }
+
+        //handle success
+        else {
+
+          //prepare smsync success response for delivery report
+          //TODO check for smssync specific format
+          let reply = {
+            payload: {
+              success: true,
+              error: null
+            }
+          };
+
+          response.ok(reply);
+
+        }
+
+      });
+
     }
 
     //receive sms
