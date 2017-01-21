@@ -29,7 +29,37 @@ const smssync = require('smssync')(<options>);
 ...
 
 //add smssync router to express
-app.use(smssync);
+app.use(smssync({
+
+    onReceive: function (sms, done) {
+      //handle received sms
+      done(<error>, <receiving response>);
+    },
+
+    onSend: function (done) {
+		//obtain sms to send
+		done(<error>, <array of sms to send>);
+    },
+
+    onSent: function (queued, done) {
+      //received queud sms from smssync device
+      done(<error>, <array of sms that already queued>);
+
+    },
+
+    onQueued: function (done) {
+      //obtain sms waiting delivery report
+      done(<error>, <array of message ids or uuids>);
+    },
+
+    onDelivered: function (delivered, done) {
+      //receive delivery status
+      ...
+      done(<error>, <processing results>);
+
+    }
+
+  }));
 
 app.listen();
 
