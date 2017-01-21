@@ -16,7 +16,11 @@ const express = require('express');
 const respond = require('express-respond');
 const bodyParser = require('body-parser');
 const router = express.Router();
+
+//smssync tasks
 const TASK_SEND = 'send';
+const TASK_RESULT = 'result';
+const TASK_SENT = 'sent';
 
 exports = module.exports = function (options) {
 
@@ -57,70 +61,98 @@ exports = module.exports = function (options) {
    * @param {Function} next next middleware to invoke incase of error
    */
   router.post('/' + options.endpoint, function (request, response, next) {
-    //obtain sent sms
-    const sms = request.body;
+    //obtain sent sms, queued sms uuids or sms delivery result
+    const body = request.body;
 
     //TODO ensure secret match
 
     //obtain request task
+    const task = (request.query || {}).task;
 
-    //hand over message to a receiver
-    options.onReceive(sms, function (error, result) {
+    //handle sent delivery status
+    if (task && task === TASK_SENT) {
 
-      //pass error to error handler middleware
-      if (error && !options.error) {
-        next(error);
-      }
+      //handle over queued message uuids
+      const queued = _.get(body, 'queued_messages');
+      options.onSent(queued, function (error, result) {
 
-      //handle error
-      else if (error && options.error) {
-
-        //obtain error message
-        const message = error.message ||
-          'Fail to process received message';
-
-        //prepare smsync error response
+        //prepare sent reply
         const reply = {
-          payload: {
-            success: false,
-            error: message
-          }
+          'queued_messages': [].concat(result)
         };
 
-        //respond with error
         response.ok(reply);
 
-      }
+      });
 
-      //handle success
-      else {
+    }
 
-        //prepare smsync success response
-        let reply = {
-          payload: {
-            success: true,
-            error: null
+    //handle delivery status
+    else if (task && task === TASK_RESULT) {
+      //TODO
+    }
+
+    //receive sms
+    else {
+      //hand over message to a receiver
+      options
+        .onReceive(body, function (error, result) {
+
+          //pass error to error handler middleware
+          if (error && !options.error) {
+            next(error);
           }
-        };
 
-        //check if smsync endpoint is configure to reply with sms
-        if (options.reply) {
-          delete reply.payload.error;
+          //handle error
+          else if (error && options.error) {
 
-          //update reply with reply message(s)
-          reply.payload.task = TASK_SEND;
+            //obtain error message
+            const message = error.message ||
+              'Fail to process received message';
 
-          //prepare reply messages
-          const messages = [].concat(result);
-          reply.payload.messages = messages;
-        }
+            //prepare smsync error response
+            const reply = {
+              payload: {
+                success: false,
+                error: message
+              }
+            };
 
-        //respond with success
-        response.ok(reply);
+            //respond with error
+            response.ok(reply);
 
-      }
+          }
 
-    });
+          //handle success
+          else {
+
+            //prepare smsync success response
+            let reply = {
+              payload: {
+                success: true,
+                error: null
+              }
+            };
+
+            //check if smsync endpoint is configure to reply with sms
+            if (options.reply) {
+              delete reply.payload.error;
+
+              //update reply with reply message(s)
+              reply.payload.task = TASK_SEND;
+
+              //prepare reply messages
+              const messages = [].concat(result);
+              reply.payload.messages = messages;
+            }
+
+            //respond with success
+            response.ok(reply);
+
+          }
+
+        });
+    }
 
   });
 
@@ -136,51 +168,75 @@ exports = module.exports = function (options) {
     //TODO ensure secret match
 
     //obtain request task
+    const task = (request.query || {}).task;
 
-    //obtain sms to send
-    options.onSend(function (error, result) {
+    //handle result task and respond with sms waiting
+    //delivery report
+    if (task && task === TASK_RESULT) {
 
-      //pass error to error handler middleware
-      if (error && !options.error) {
-        next(error);
-      }
+      //obtain sms waiting delivery report
+      options.onQueued(function (error, result) {
 
-      //handle error
-      else if (error && options.error) {
-
-        //obtain error message
-        const message = error.message ||
-          'Fail to obtain message to send';
-
-        //prepare smsync error response
+        //prepare wait delivery reply
         const reply = {
-          payload: {
-            success: false,
-            error: message
-          }
-        };
-
-        //respond with error
-        response.ok(reply);
-
-      }
-
-      //handle success
-      else {
-
-        //prepare sms to send reply
-        const reply = {
-          payload: {
-            task: TASK_SEND,
-            secret: options.secret,
-            messages: [].concat(result)
-          }
+          'message_uuids': [].concat(result)
         };
 
         response.ok(reply);
-      }
 
-    });
+      });
+
+    }
+
+    //reply with sms to send
+    else {
+
+      //obtain sms to send
+      options.onSend(function (error, result) {
+
+        //pass error to error handler middleware
+        if (error && !options.error) {
+          next(error);
+        }
+
+        //handle error
+        else if (error && options.error) {
+
+          //obtain error message
+          const message = error.message ||
+            'Fail to obtain message to send';
+
+          //prepare smsync error response
+          const reply = {
+            payload: {
+              success: false,
+              error: message
+            }
+          };
+
+          //respond with error
+          response.ok(reply);
+
+        }
+
+        //handle success
+        else {
+
+          //prepare sms to send reply
+          const reply = {
+            payload: {
+              task: TASK_SEND,
+              secret: options.secret,
+              messages: [].concat(result)
+            }
+          };
+
+          response.ok(reply);
+        }
+
+      });
+
+    }
 
   });
 

@@ -6,6 +6,11 @@
 
 smsync endpoint for nodejs.
 
+It support
+ - Receiving of sms(s) from SMSSync device
+ - Provide sms(s) to send by polling SMSSync device
+ - Handle Delivery report of sent sms(s) by SMSSync device  
+
 ## Requirements
 
 - NodeJS v6.5+

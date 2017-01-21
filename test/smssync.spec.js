@@ -32,6 +32,7 @@ describe('smssync', function () {
       done(null, reply);
 
     },
+
     onSend: function (done) {
 
       /*jshint camelcase:false*/
@@ -45,9 +46,27 @@ describe('smssync', function () {
       done(null, [sms]);
 
     },
-    onDelivered: function (smss, done) {
-      done(null, smss);
+
+    onSent: function (queued, done) {
+      //assert queued sms
+      expect(queued).to.exist;
+      expect(queued).to.be.an('array');
+      expect(queued).to.have.length(1);
+
+      //received queued message from a device
+      done(null, queued);
+
+    },
+
+    onQueued: function (done) {
+      //obtain sms waiting delivery report
+      done(null, [faker.random.uuid()]);
+    },
+
+    onResult: function (delivered, done) {
+      done(null, delivered);
     }
+
   }));
 
   it('should be able to receive sync sms from a device', function (done) {
@@ -95,6 +114,37 @@ describe('smssync', function () {
 
   });
 
+  it('should be able to receive queued sms to be sent by a device',
+    function (done) {
+
+      const queued = {
+        'queued_messages': [faker.random.uuid()]
+      };
+
+      request(app)
+        .post('/smssync?task=sent')
+        .send(queued)
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function (error, response) {
+
+          expect(error).to.not.exist;
+          expect(response).to.exist;
+
+          const body = response.body;
+
+          expect(body).to.exist;
+          expect(_.get(body, 'queued_messages')).to.exist;
+          expect(_.get(body, 'queued_messages'))
+            .to.have.same.members(_.get(queued, 'queued_messages'));
+
+          done(error, response);
+
+        });
+
+    });
+
   it('should be able to return sms to be sent by device', function (done) {
 
     request(app)
@@ -129,5 +179,29 @@ describe('smssync', function () {
       });
 
   });
+
+  it('should be able to return sms waiting delivery report to a device',
+    function (done) {
+
+      request(app)
+        .get('/smssync?task=result')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function (error, response) {
+
+          expect(error).to.not.exist;
+          expect(response).to.exist;
+
+          const body = response.body;
+
+          expect(body).to.exist;
+          expect(_.get(body, 'message_uuids')).to.exist;
+
+          done(error, response);
+
+        });
+
+    });
 
 });
