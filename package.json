@@ -1,9 +1,9 @@
 {
-  "name": "smsync",
-  "version": "0.1.0",
-  "description": "smsync endpoint for nodejs",
+  "name": "smssync",
+  "version": "0.1.1",
+  "description": "smssync endpoint for nodejs",
   "keywords": [
-    "smsync",
+    "smssync",
     "sms",
     "endpoint"
   ],
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lykmapipo/smsync.git"
+    "url": "https://github.com/lykmapipo/smssync.git"
   },
   "author": {
     "name": "lykmapipo",
@@ -22,9 +22,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lykmapipo/smsync/issues"
+    "url": "https://github.com/lykmapipo/smssync/issues"
   },
-  "homepage": "https://github.com/lykmapipo/smsync",
+  "homepage": "https://github.com/lykmapipo/smssync",
   "contributors": [
     {
       "name": "lykmapipo",
