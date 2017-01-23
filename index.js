@@ -15,12 +15,19 @@ const _ = require('lodash');
 const express = require('express');
 const respond = require('express-respond');
 const bodyParser = require('body-parser');
+const hash = require('object-hash');
 const router = express.Router();
 
 //smssync tasks
 const TASK_SEND = 'send';
 const TASK_RESULT = 'result';
 const TASK_SENT = 'sent';
+
+//sms message fields
+const MESSAGE_FIELDS = [
+  'from', 'message', 'message_id',
+  'sent_to', 'device_id', 'sent_timestamp'
+];
 
 exports = module.exports = function (options) {
 
@@ -104,6 +111,8 @@ exports = module.exports = function (options) {
 
   }
 
+  //TODO add sender blacklist 
+
 
   /**
    * Handle Http POST on /smssync
@@ -114,9 +123,7 @@ exports = module.exports = function (options) {
    */
   router.post('/' + options.endpoint, function (request, response, next) {
     //obtain sent sms, queued sms uuids or sms delivery result
-    const body = request.body;
-
-    //TODO ensure secret match
+    let body = request.body;
 
     //obtain request task
     const task = (request.query || {}).task;
@@ -191,9 +198,14 @@ exports = module.exports = function (options) {
 
     }
 
-    //receive sms
+    //receive sms and hand over to a message receiver
     else {
-      //hand over message to a receiver
+      //extend body with sms hash for only valid allowed smssync field
+      body = _.pick(body, MESSAGE_FIELDS);
+      body = _.merge({}, body, {
+        hash: hash(body)
+      });
+
       options
         .onReceive(body, function (error, result) {
 
@@ -264,7 +276,6 @@ exports = module.exports = function (options) {
    * @param {Function} next next middleware to invoke incase of error
    */
   router.get('/' + options.endpoint, function (request, response, next) {
-    //TODO ensure secret match
 
     //obtain request task
     const task = (request.query || {}).task;

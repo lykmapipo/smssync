@@ -19,9 +19,9 @@ describe('smssync', function () {
       expect(_.get(sms, 'message')).to.exist;
       expect(_.get(sms, 'message_id')).to.exist;
       expect(_.get(sms, 'sent_to')).to.exist;
-      expect(_.get(sms, 'secret')).to.exist;
       expect(_.get(sms, 'device_id')).to.exist;
       expect(_.get(sms, 'sent_timestamp')).to.exist;
+      expect(_.get(sms, 'hash')).to.exist;
 
       //reply
       const reply = {
