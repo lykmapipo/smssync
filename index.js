@@ -71,8 +71,15 @@ exports = module.exports = function (options) {
       //ensure secret match
       const isValidSecret = options.secret === secret;
 
+      //allowed request url
+      const isAllowedRequest =
+        (request.method === 'POST' &&
+          (request.query.task === TASK_SENT ||
+            request.query.task === TASK_RESULT)
+        );
+
       //handle request if has valid secret
-      if (isValidSecret) {
+      if (isValidSecret || isAllowedRequest) {
         next();
       }
 
