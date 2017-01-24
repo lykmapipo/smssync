@@ -208,6 +208,9 @@ exports = module.exports = function (options) {
 
       options
         .onReceive(body, function (error, result) {
+          //check if receive provide a reply
+          const hasReply =
+            _.size(_.compact(_.map([].concat(result), 'to'))) > 0;
 
           //pass error to error handler middleware
           if (error && !options.error) {
@@ -246,7 +249,7 @@ exports = module.exports = function (options) {
             };
 
             //check if smsync endpoint is configure to reply with sms
-            if (options.reply) {
+            if (options.reply && hasReply) {
               delete reply.payload.error;
 
               //update reply with reply message(s)
