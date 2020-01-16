@@ -51,7 +51,7 @@ exports = module.exports = function (options) {
 
 
   //use express respond
-  router.use(respond());
+  router.use(respond);
 
   //apply body parser middlewares
   router.use(bodyParser.json());
