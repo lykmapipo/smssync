@@ -1,6 +1,6 @@
 {
   "name": "smssync",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "smssync endpoint for nodejs",
   "keywords": [
     "smssync",
@@ -25,10 +25,12 @@
     "url": "https://github.com/lykmapipo/smssync/issues"
   },
   "homepage": "https://github.com/lykmapipo/smssync",
-  "contributors": [{
-    "name": "lykmapipo",
-    "github": "https://github.com/lykmapipo"
-  }],
+  "contributors": [
+    {
+      "name": "lykmapipo",
+      "github": "https://github.com/lykmapipo"
+    }
+  ],
   "devDependencies": {
     "chai": "^4.2.0",
     "dev": "^0.1.3",
