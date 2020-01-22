@@ -1,6 +1,6 @@
 {
   "name": "smssync",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "smssync endpoint for nodejs",
   "keywords": [
     "smssync",
