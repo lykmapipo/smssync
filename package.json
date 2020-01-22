@@ -40,14 +40,14 @@
     "grunt-mocha-test": "^0.13.3",
     "jshint-stylish": "^2.2.1",
     "mocha": "^7.0.0",
-    "mongoose": "^5.8.7",
+    "mongoose": "^5.8.9",
     "supertest": "^4.0.2"
   },
   "dependencies": {
     "async": ">=3.1.0",
     "body-parser": ">=1.19.0",
     "express": ">=4.17.1",
-    "express-respond": ">=1.4.15",
+    "express-respond": ">=1.4.16",
     "lodash": ">=4.17.15",
     "object-hash": ">=2.0.1"
   }
