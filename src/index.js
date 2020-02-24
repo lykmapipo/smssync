@@ -52,11 +52,12 @@ export const smssync = optns => {
   );
 
   // use express respond
-  router.use(respond);
+  router.use(`/${options.endpoint}`, respond);
 
   // apply body parser middlewares
-  router.use(bodyParser.json());
+  router.use(`/${options.endpoint}`, bodyParser.json());
   router.use(
+    `/${options.endpoint}`,
     bodyParser.urlencoded({
       extended: true,
     })
@@ -65,7 +66,7 @@ export const smssync = optns => {
   // protect endpoint with secret
   if (options.secret && !_.isEmpty(options.secret)) {
     // use middleware to protect endpoint using a secret
-    router.use((request, response, next) => {
+    router.use(`/${options.endpoint}`, (request, response, next) => {
       // obtain secret from query or body
       const secret =
         (request.query || {}).secret || (request.body || {}).secret;
