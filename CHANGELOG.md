@@ -1,3 +1,9 @@
+#### 0.3.0 (2020-02-24)
+
+##### Documentation Changes
+
+- **changelog:** generate latest release notes ([6b88cc75](https://github.com/lykmapipo/smssync/commit/6b88cc750a86969bb4087e9266ed480f2b7e15e5))
+
 #### 0.2.7 (2020-02-16)
 
 #### 0.2.6 (2020-02-04)
