@@ -30,7 +30,7 @@ export const MESSAGE_FIELDS = [
   'sent_timestamp',
 ];
 
-export const smssync = optns => {
+export const smssync = (optns) => {
   // merge options
   const options = _.merge(
     {},

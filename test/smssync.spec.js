@@ -74,7 +74,7 @@ describe('smssync', () => {
     })
   );
 
-  it('should be able to receive sync sms from a device', done => {
+  it('should be able to receive sync sms from a device', (done) => {
     const sms = {
       from: faker.phone.phoneNumber(),
       message: faker.lorem.sentence(),
@@ -113,7 +113,7 @@ describe('smssync', () => {
       });
   });
 
-  it('should be able to receive queued sms to be sent by a device', done => {
+  it('should be able to receive queued sms to be sent by a device', (done) => {
     const queued = {
       queued_messages: [faker.random.uuid()],
     };
@@ -140,7 +140,7 @@ describe('smssync', () => {
       });
   });
 
-  it('should be able to receive delivery reports sent by a device', done => {
+  it('should be able to receive delivery reports sent by a device', (done) => {
     const delivered = {
       message_result: [
         {
@@ -173,7 +173,7 @@ describe('smssync', () => {
       });
   });
 
-  it('should be able to return sms to be sent by device', done => {
+  it('should be able to return sms to be sent by device', (done) => {
     request(app)
       .get('/smssync?secret=smssync')
       .set('Accept', 'application/json')
@@ -204,7 +204,7 @@ describe('smssync', () => {
       });
   });
 
-  it('should be able to return sms waiting delivery report to a device', done => {
+  it('should be able to return sms waiting delivery report to a device', (done) => {
     request(app)
       .get('/smssync?task=result&secret=smssync')
       .set('Accept', 'application/json')
@@ -223,7 +223,7 @@ describe('smssync', () => {
       });
   });
 
-  it('should be able to reject request with no secret key sent by device', done => {
+  it('should be able to reject request with no secret key sent by device', (done) => {
     request(app)
       .get('/smssync')
       .set('Accept', 'application/json')

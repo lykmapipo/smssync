@@ -1,3 +1,13 @@
+#### 0.3.3 (2020-03-30)
+
+##### Chores
+
+- **deps:** force latest version & audit fix ([f4ddc480](https://github.com/lykmapipo/smssync/commit/f4ddc480fc960b463fb3bbffde7d4bb68a073353))
+
+##### Documentation Changes
+
+- **changelog:** generate latest release notes ([678d31fb](https://github.com/lykmapipo/smssync/commit/678d31fb3b9d7850cec7b3df08aa47e2a396c01e))
+
 #### 0.3.3 (2020-03-06)
 
 #### 0.3.2 (2020-02-28)
