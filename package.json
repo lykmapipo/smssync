@@ -63,7 +63,7 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jsdoc": "^30.0.0",
+    "eslint-plugin-jsdoc": "^30.0.3",
     "eslint-plugin-mocha": "^7.0.1",
     "eslint-plugin-prettier": "^3.1.4",
     "faker": "^4.1.0",
@@ -79,7 +79,7 @@
     "nyc": "^15.1.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
-    "rollup": "^2.22.1",
+    "rollup": "^2.23.0",
     "shelljs": "^0.8.4",
     "supertest": "^4.0.2"
   },
@@ -87,7 +87,7 @@
     "async": ">=3.2.0",
     "body-parser": ">=1.19.0",
     "express": ">=4.17.1",
-    "express-respond": ">=1.5.8",
+    "express-respond": ">=1.5.9",
     "lodash": ">=4.17.19",
     "object-hash": ">=2.0.3"
   },
